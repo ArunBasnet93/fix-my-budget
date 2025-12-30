@@ -1,95 +1,88 @@
+"use client";
+
+import Image from "next/image";
+import { useEffect, useState } from "react";
+
+const BG_IMAGES = [
+  "/landing/YS-MC.png",
+  "/landing/YS_FA.png",
+  "/landing/YS_MAA.png",
+  "/landing/YS-FAA.png",
+  "/landing/YS-FC.png",
+  "/landing/YS-MA.png",
+];
+
+const ROTATE_MS = 7000;
+
 export default function Home() {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setActive((i) => (i + 1) % BG_IMAGES.length);
+    }, ROTATE_MS);
+    return () => clearInterval(t);
+  }, []);
+
   return (
-    <main className="min-h-screen bg-white text-slate-900">
-      <div className="mx-auto max-w-5xl px-6 py-16">
-        <header className="flex items-center justify-between">
-          <div className="text-lg font-semibold">Fix-My-Budget</div>
-          <nav className="text-sm text-slate-600">
-            <a className="hover:text-slate-900" href="#features">Features</a>
-            <span className="mx-3">·</span>
-            <a className="hover:text-slate-900" href="#how">How it works</a>
-            <span className="mx-3">·</span>
-            <a className="hover:text-slate-900" href="#cta">Get started</a>
-          </nav>
-        </header>
+    <main className="relative min-h-screen overflow-hidden">
+      {/* Background crossfade */}
+      <div className="absolute inset-0">
+        {BG_IMAGES.map((src, i) => (
+          <Image
+            key={src}
+            src={src}
+            alt=""
+            fill
+            priority={i === 0}
+            className={[
+              "object-cover",
+              "transition-opacity duration-700",
+              i === active ? "opacity-100" : "opacity-0",
+            ].join(" ")}
+          />
+        ))}
 
-        <section className="mt-16">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-            Fix your budget. Keep it fixed.
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg text-slate-600">
-            A simple budgeting workflow that separates fixed costs from flexible spending,
-            so you always know what you can safely spend today.
-          </p>
+        {/* Readability overlay */}
+        <div className="absolute inset-0 bg-black/35" />
+      </div>
 
-          <div className="mt-10 flex flex-wrap gap-3" id="cta">
-            <a
-              className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:opacity-90"
-              href="/app"
-            >
-              Open the app
-            </a>
-            <a
-              className="rounded-md border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
-              href="#features"
-            >
-              See features
-            </a>
-          </div>
+      {/* Buttons only */}
+      <div className="relative flex min-h-screen items-start justify-end p-6">
+        <div className="flex gap-3">
+          <a
+            href="#get-started"
+            className="rounded-md bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-white/90"
+          >
+            Get started
+          </a>
 
-          <div className="mt-8 flex flex-wrap gap-2 text-xs text-slate-500">
-            <span className="rounded-full border border-slate-200 px-3 py-1">Local-first</span>
-            <span className="rounded-full border border-slate-200 px-3 py-1">Postgres-ready</span>
-            <span className="rounded-full border border-slate-200 px-3 py-1">Fixed vs Variable</span>
-          </div>
-        </section>
+          <a
+            href="#login"
+            className="rounded-md border border-white/40 px-4 py-2 text-sm font-medium text-white hover:border-white/70"
+          >
+            Log in
+          </a>
+        </div>
+      </div>
 
-        <section id="features" className="mt-20 grid gap-6 sm:grid-cols-3">
-          {[
-            {
-              title: "Fixed vs variable",
-              desc: "Separate recurring obligations from flexible spending.",
-            },
-            {
-              title: "Monthly clarity",
-              desc: "One place to see income, bills, and what’s left.",
-            },
-            {
-              title: "Budget guardrails",
-              desc: "Set limits per category and spot leaks early.",
-            },
-          ].map((f) => (
-            <div key={f.title} className="rounded-xl border border-slate-200 p-6">
-              <h3 className="font-semibold">{f.title}</h3>
-              <p className="mt-2 text-sm text-slate-600">{f.desc}</p>
-            </div>
+      {/* Optional: small selector dots (still only transitions-related) */}
+      <div className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2">
+        <div className="flex items-center gap-2">
+          {BG_IMAGES.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={`Switch illustration to ${i + 1}`}
+              onClick={() => setActive(i)}
+              className={[
+                "h-2.5 w-2.5 rounded-full",
+                "border border-white/60",
+                i === active ? "bg-white" : "bg-white/20 hover:bg-white/35",
+              ].join(" ")}
+            />
           ))}
-        </section>
-
-        <section id="how" className="mt-20 rounded-xl border border-slate-200 p-8">
-          <h2 className="text-2xl font-semibold">How it works</h2>
-          <ol className="mt-6 grid gap-4 sm:grid-cols-3">
-            <li className="rounded-lg bg-slate-50 p-4">
-              <div className="text-xs font-semibold text-slate-500">Step 1</div>
-              <div className="mt-1 font-medium">Add income</div>
-              <div className="mt-1 text-sm text-slate-600">Monthly salary, benefits, side income.</div>
-            </li>
-            <li className="rounded-lg bg-slate-50 p-4">
-              <div className="text-xs font-semibold text-slate-500">Step 2</div>
-              <div className="mt-1 font-medium">Add fixed costs</div>
-              <div className="mt-1 text-sm text-slate-600">Rent, insurance, subscriptions, debt.</div>
-            </li>
-            <li className="rounded-lg bg-slate-50 p-4">
-              <div className="text-xs font-semibold text-slate-500">Step 3</div>
-              <div className="mt-1 font-medium">Plan flexible spending</div>
-              <div className="mt-1 text-sm text-slate-600">Food, travel, fun—without guessing.</div>
-            </li>
-          </ol>
-        </section>
-
-        <footer className="mt-20 border-t border-slate-200 pt-8 text-sm text-slate-500">
-          © {new Date().getFullYear()} Fix-My-Budget
-        </footer>
+        </div>
       </div>
     </main>
   );
