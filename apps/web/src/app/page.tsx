@@ -1,89 +1,51 @@
-"use client";
+import Header from "@/components/landing/Header";
+import Hero from "@/components/landing/Hero";
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
-
-const BG_IMAGES = [
-  "/landing/YS-MC.png",
-  "/landing/YS_FA.png",
-  "/landing/YS_MAA.png",
+const HERO_IMAGES = [
   "/landing/YS-FAA.png",
   "/landing/YS-FC.png",
   "/landing/YS-MA.png",
+  "/landing/YS-MC.png",
+  "/landing/YS_FA.png",
+  "/landing/YS_MAA.png",
 ];
 
-const ROTATE_MS = 7000;
+const noiseStyle = {
+  backgroundImage:
+    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E\")",
+};
 
-export default function Home() {
-  const [active, setActive] = useState(0);
+interface HomePageProps {
+  searchParams?: {
+    minimal?: string;
+  };
+}
 
-  useEffect(() => {
-    const t = setInterval(() => {
-      setActive((i) => (i + 1) % BG_IMAGES.length);
-    }, ROTATE_MS);
-    return () => clearInterval(t);
-  }, []);
+export default function Home({ searchParams }: HomePageProps) {
+  const isMinimal = searchParams?.minimal === "1";
 
   return (
-    <main className="relative min-h-screen overflow-hidden">
-      {/* Background crossfade */}
-      <div className="absolute inset-0">
-        {BG_IMAGES.map((src, i) => (
-          <Image
-            key={src}
-            src={src}
-            alt=""
-            fill
-            priority={i === 0}
-            className={[
-              "object-cover",
-              "transition-opacity duration-700",
-              i === active ? "opacity-100" : "opacity-0",
-            ].join(" ")}
-          />
-        ))}
-
-        {/* Readability overlay */}
-        <div className="absolute inset-0 bg-black/35" />
+    <main className="relative min-h-screen overflow-hidden bg-[#F7F1E7] text-[#1F1711]">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-32 left-1/2 h-72 w-[48rem] -translate-x-1/2 rounded-full bg-white/70 blur-3xl" />
+        <div className="absolute bottom-[-6rem] right-[-4rem] h-72 w-72 rounded-full bg-[#F8C6A6]/50 blur-3xl" />
+        <div
+          className="absolute inset-0 opacity-[0.18] mix-blend-multiply"
+          style={noiseStyle}
+        />
       </div>
-
-      {/* Buttons only */}
-      <div className="relative flex min-h-screen items-start justify-end p-6">
-        <div className="flex gap-3">
-          <a
-            href="#get-started"
-            className="rounded-md bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-white/90"
-          >
-            Get started
-          </a>
-
-          <a
-            href="#login"
-            className="rounded-md border border-white/40 px-4 py-2 text-sm font-medium text-white hover:border-white/70"
-          >
-            Log in
-          </a>
+      {isMinimal ? (
+        <div className="relative flex min-h-screen items-center justify-center px-6 text-center">
+          <h1 className="text-4xl font-semibold leading-tight tracking-tight text-[#1E1711] sm:text-5xl lg:text-6xl">
+            Fix your budget in minutes.
+          </h1>
         </div>
-      </div>
-
-      {/* Optional: small selector dots (still only transitions-related) */}
-      <div className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2">
-        <div className="flex items-center gap-2">
-          {BG_IMAGES.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              aria-label={`Switch illustration to ${i + 1}`}
-              onClick={() => setActive(i)}
-              className={[
-                "h-2.5 w-2.5 rounded-full",
-                "border border-white/60",
-                i === active ? "bg-white" : "bg-white/20 hover:bg-white/35",
-              ].join(" ")}
-            />
-          ))}
+      ) : (
+        <div className="relative pb-20">
+          <Header />
+          <Hero imageSrcs={HERO_IMAGES} />
         </div>
-      </div>
+      )}
     </main>
   );
 }
